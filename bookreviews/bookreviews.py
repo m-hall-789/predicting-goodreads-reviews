@@ -7,6 +7,13 @@ from selenium import webdriver
 import os
 import math
 import time
+import csv
+
+
+
+# options = Options()
+# options.add_argument('--headless=new')
+# driver = webdriver.Chrome(CHROMEDRIVER_PATH, options=options)
 
 # script_dir = os.path.dirname(__file__)
 # rel_path_to_driver = "../drivers/chromedriver"
@@ -30,30 +37,32 @@ class BookReviews(webdriver.Chrome):
             self.quit()
 
     # One for testing
-    def get_book_list(self):
-        url = const.BOOKS_LIST + "1"
-        self.get(url)
-        elements = self.find_elements(By.XPATH, "//a[@class='bookTitle']")
-        titles = [ele.get_attribute('href') for ele in elements]
-        print(len(elements))
-        print(len(titles))
-        print(titles[:5])
+    # def get_book_list(self):
+    #     url = const.BOOKS_LIST + "1"
+    #     self.get(url)
+    #     elements = self.find_elements(By.XPATH, "//a[@class='bookTitle']")
+    #     titles = [ele.get_attribute('href') for ele in elements]
+    #     print(len(elements))
+    #     print(len(titles))
+    #     print(titles[:5])
 
-    def get_books(self):
+    def get_books(self, num_books=const.NUM_BOOKS):
         page=1
-        num_pages = math.floor(const.NUM_BOOKS/50)
+        num_pages = math.floor(num_books/100)
         book_urls = []
         while page <= num_pages:
             url=const.BOOKS_LIST + str(page)
             self.get(url)
+            self.check_for_popup()
             elements = self.find_elements(By.XPATH, "//a[@class='bookTitle']")
             book_urls.extend([ele.get_attribute('href') for ele in elements])
             page+=1
-        if const.NUM_BOOKS%50:
+        if num_books%100:
             url=const.BOOKS_LIST + str(page)
             self.get(url)
+            self.check_for_popup()
             elements = self.find_elements(By.XPATH, "//a[@class='bookTitle']")
-            book_urls.extend([ele.get_attribute('href') for ele in elements[:(const.NUM_BOOKS%50)]])
+            book_urls.extend([ele.get_attribute('href') for ele in elements[:(num_books%100)]])
         return book_urls
 
     def get_review_urls(self, book_urls):
@@ -73,6 +82,9 @@ class BookReviews(webdriver.Chrome):
             review_url = const.BEGIN_URL + distinct_url[:important_index] + "/reviews"
             review_urls.append(review_url)
         return review_urls
+
+    # def get_books_and_review_urls(self):
+    #     self.get_books()
 
     def check_for_popup(self):
         time.sleep(2)
@@ -106,21 +118,36 @@ class BookReviews(webdriver.Chrome):
     #     load_more_button.click()
     #     time.sleep(3)
 
-    def get_reviews(self):
-        reviews = self.find_elements(By.XPATH, "//article[@class='ReviewCard']")
-        single_book_reviews = []
-        for review in reviews:
-            review_string = self.find_element(By.XPATH, "//span[@class='RatingStars RatingStars__small']").get_attribute("aria-label")
-            review_score = review_string[7]
-            all_text = self.find_element(By.XPATH, "//div[@class='TruncatedContent']")
-            review_text = all_text.find_element(By.XPATH, "//span[@class='Formatted']").text
-            single_book_reviews.append([review_score, review_text])
+    def get_reviews_for_single_book(self, url):
+        incomplete = True
+        while incomplete:
+            try:
+                self.get(url)
+                self.check_for_popup()
+                self.select_english_filter()
+                review_scores = self.find_elements(By.XPATH, "//span[@class='RatingStars RatingStars__small']")
+                review_texts = self.find_elements(By.XPATH, "//span[@class='Formatted']")
+                single_book_reviews = []
+                for review_score, review_text in zip(review_scores, review_texts):
+                    actual_score = review_score.get_attribute("aria-label")[7]
+                    actual_text = review_text.text
+                    single_book_reviews.append([actual_score, actual_text])
+                incomplete=False
+            except:
+                time.sleep(5)
+        print(f"Have scraped {len(single_book_reviews)} reviews for the book.")
         return single_book_reviews
 
-    def get_reviews_for_all_books(self, review_urls):
-        reviews_dataset = []
-        reviews_dataset.append(['review score', 'review text'])
-        for review_url in review_urls:
-            single_book_reviews = self.get_reviews(review_url)
-            reviews_dataset.append(single_book_reviews)
-        return reviews_dataset
+    def get_all_reviews_and_save(self, review_urls):
+        first_line = ['review score', 'review text']
+        reviews_count = 0
+        with open('goodreads-reviews-sample-dataset2.csv', 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(first_line)
+            for review_url in review_urls:
+                single_book_reviews = self.get_reviews_for_single_book(review_url)
+                writer.writerows(single_book_reviews)
+                reviews_count += 1
+                if reviews_count%1 == 0:
+                    print(f"Added reviews for {reviews_count} books so far!")
+        return
