@@ -125,13 +125,17 @@ class BookReviews(webdriver.Chrome):
                 self.get(url)
                 self.check_for_popup()
                 self.select_english_filter()
-                review_scores = self.find_elements(By.XPATH, "//span[@class='RatingStars RatingStars__small']")
-                review_texts = self.find_elements(By.XPATH, "//span[@class='Formatted']")
+                review_cards = self.find_elements(By.XPATH, "//article[@class='ReviewCard']")
                 single_book_reviews = []
-                for review_score, review_text in zip(review_scores, review_texts):
-                    actual_score = review_score.get_attribute("aria-label")[7]
-                    actual_text = review_text.text
-                    single_book_reviews.append([actual_score, actual_text])
+                for review_card in review_cards:
+                    try:
+                        review_score = review_card.find_element(By.XPATH, ".//span[@class='RatingStars RatingStars__small']").get_attribute("aria-label")[7]
+                    except:
+                        continue
+                    review_text = review_card.find_element(By.XPATH, ".//span[@class='Formatted']").text
+                    if not review_text:
+                        continue
+                    single_book_reviews.append([review_score, review_text])
                 incomplete=False
             except:
                 time.sleep(5)
@@ -148,6 +152,6 @@ class BookReviews(webdriver.Chrome):
                 single_book_reviews = self.get_reviews_for_single_book(review_url)
                 writer.writerows(single_book_reviews)
                 reviews_count += 1
-                if reviews_count%1 == 0:
+                if reviews_count%10 == 0:
                     print(f"Added reviews for {reviews_count} books so far!")
         return
