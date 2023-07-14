@@ -145,7 +145,7 @@ class BookReviews(webdriver.Chrome):
     def get_all_reviews_and_save(self, review_urls):
         first_line = ['review score', 'review text']
         reviews_count = 0
-        with open('goodreads-reviews-sample-dataset2.csv', 'w', newline='') as csvfile:
+        with open('goodreads-reviews-full-dataset.csv', 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(first_line)
             for review_url in review_urls:
