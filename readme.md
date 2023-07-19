@@ -7,6 +7,6 @@ This will involve webscraping review texts and scores from popular books on Good
 a model to predict the review score from the review text.
 
 Current level of progress:
-Webscraping: :heavy_check_mark:
-Data preprocessing: :heavy_check_mark:
-Model construction and training: :o:
+Webscraping: :heavy_check_mark: \n
+Data preprocessing: :heavy_check_mark: \n
+Model construction and training: :o: \n
