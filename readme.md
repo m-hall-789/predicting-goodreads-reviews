@@ -6,7 +6,7 @@ This will involve webscraping review texts and scores from popular books on Good
 (using Selenium), cleaning and preparing the data for sentiment analysis, and then training
 a model to predict the review score from the review text.
 
-Current level of progress: __
-Webscraping: :heavy_check_mark: __
-Data preprocessing: :heavy_check_mark: __
+Current level of progress: <br/>
+Webscraping: :heavy_check_mark: <br/>
+Data preprocessing: :heavy_check_mark: <br/>
 Model construction and training: :o:
