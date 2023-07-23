@@ -1,9 +1,8 @@
-import types
-import typing
 import bookreviews.constants as const
-from selenium.webdriver.common.by import By
 
+from selenium.webdriver.common.by import By
 from selenium import webdriver
+
 import os
 import math
 import time
@@ -147,7 +146,7 @@ class BookReviews(webdriver.Chrome):
         """
         first_line = ['review score', 'review text']
         reviews_count = 0
-        with open('goodreads-reviews-full-dataset-2.csv', 'w', newline='') as csvfile:
+        with open('goodreads-reviews-full-dataset.csv', 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(first_line)
             for review_url in review_urls:
