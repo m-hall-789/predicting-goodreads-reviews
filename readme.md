@@ -21,12 +21,12 @@ The webscraping elements can be used, but will require a bit of setup.
 Ensure that selenium is installed. Next, you will need to install the correct
 driver for your version of Chrome.
 
-[The website where you can download the drivers can be found here, get the corresponding one for the chrome version](https://chromedriver.chromium.org/downloads)
+[Website link to download driver](https://chromedriver.chromium.org/downloads)
 
 When this driver is downloaded and saved, you will need to update the DRIVER_REL_PATH in the "constants.py" so that it matches
 the relative path to the driver from this directory.
 
-Once this is done, you should be able to run the "main.py" file from the console in python, and the webscraping should begin.
+Once this is done, you should be able to run the "main.py" file from the console, and the webscraping should begin.
 
 ### Future work ons
 
