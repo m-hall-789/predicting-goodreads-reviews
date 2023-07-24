@@ -28,10 +28,10 @@ the relative path to the driver from this directory.
 
 Once this is done, you should be able to run the "main.py" file from the console, and the webscraping should begin.
 
-### Future work ons
+### Future work
 
 1. Change the webscraper so it catches error 404 exceptions and deals with them properly rather than constantly reloading
 2. Change the webscraper so that it gets the text hidden behind spoiler tags
 3. Consider using pretrained embedding (such as 'glove-wiki-gigaword-50' from gensim) for the modelling
-4. Try lemmatizing and removing stop words as part of the data preprocessing
+4. Try lemmatizing and removing stop words as part of the data preprocessing :heavy_check_mark:
 5. Optimise the model architecture (layer structure, loss functions, activation function) and the tokenizer (maxlen, padding, truncating)
